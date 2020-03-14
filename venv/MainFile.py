@@ -1,5 +1,6 @@
 import tkinter as tk
-import time
+
+import time,threading
 from tkinter import filedialog
 from tkinter import scrolledtext
 
@@ -58,8 +59,9 @@ class Main(tk.Tk):
 
         ############################################### setting AI enabler ################################################
         self.logo8 = tk.PhotoImage(file='ai activated')
+        self.aicounter=0
         self.logo9 = tk.PhotoImage(file='ai deactivated')
-        self.aibutton = tk.Button(self,command=self.open_file, compound=tk.TOP,
+        self.aibutton = tk.Button(self,command=self.ai_mode, compound=tk.TOP,
                                              relief=tk.FLAT,
                                              image=self.logo9, font=("garamond", "10", "bold"))
         self.aibutton.place(x=1400, y=60)
@@ -72,7 +74,24 @@ class Main(tk.Tk):
         self.file_address_label.place(x=800, y=822)
 
         ######################################################################################################################
-        
+    def ai_mode(self):
+        self.aicounter+=1
+        thread1 = threading.Thread(target=self.ai_working)
+        thread1.start()
+    def ai_working(self):
+
+        if self.aicounter % 2 !=0:
+            self.aibutton.config(image=self.logo8)
+            self.update()
+            while 1==1:
+                if self.aicounter % 2 != 0:
+                    print("yay!!!")
+
+                else:
+                    print('stopped!!!!')
+                    self.aibutton.config(image=self.logo9)
+                    self.update()
+                    return 0
     def save_file(self):
         self.status.config(image=self.logo4)
         self.update()
