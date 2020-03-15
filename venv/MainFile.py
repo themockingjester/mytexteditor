@@ -1,9 +1,10 @@
 import tkinter as tk
-
+from Words_Suggestor import Words_Suggestor
+from Words_adder import Words_adder
 import time,threading
 from tkinter import filedialog
 from tkinter import scrolledtext
-
+from words_filter import words_filter
 class Main(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -83,9 +84,13 @@ class Main(tk.Tk):
         if self.aicounter % 2 !=0:
             self.aibutton.config(image=self.logo8)
             self.update()
-            while 1==1:
+            if 1==1:
                 if self.aicounter % 2 != 0:
-                    print("yay!!!")
+                    a=self.txtbox.get(1.0,tk.END)
+                    lis = words_filter(a)
+                    listofwords=lis.output()
+                    obj = Words_Suggestor(listofwords)
+
 
                 else:
                     print('stopped!!!!')
