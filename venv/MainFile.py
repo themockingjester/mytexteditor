@@ -1,5 +1,4 @@
 import tkinter as tk
-from aicounterclass import aicounterclass
 from Words_Suggestor import Words_Suggestor
 from Words_adder import Words_adder
 import time, threading, keyboard
