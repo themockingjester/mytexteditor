@@ -89,7 +89,7 @@ class Main(tk.Tk):
                     a=self.txtbox.get(1.0,tk.END)
                     lis = words_filter(a)
                     listofwords=lis.output()
-                    obj = Words_Suggestor(listofwords)
+                    obj = Words_adder(listofwords)
 
 
                 else:
