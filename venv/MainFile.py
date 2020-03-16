@@ -1,5 +1,8 @@
+import os
 import tkinter
 import tkinter as tk
+from datetime import date
+from filename_provider import filename_provider
 from Words_Suggestor import Words_Suggestor
 from Words_adder import Words_adder
 import time, threading, keyboard
@@ -12,6 +15,13 @@ from words_filter import words_filter
 class Main(tk.Tk):
     def __init__(self):
         super().__init__()
+        try:
+            path1 = os.getcwd()
+            path = path1 + '/include/resources/_usr/logs/traverse'
+            os.makedirs(path)
+            os.chdir(path1)
+        except:
+            pass
         ################################################create file panel#####################################################
         self.logo = tk.PhotoImage(file='createfile1.png')
         self.newbutton = tk.Button(self, text='new file', command=self.create_file, compound=tk.TOP, relief=tk.FLAT,
@@ -56,7 +66,7 @@ class Main(tk.Tk):
 
         ############################################### setting time traverser ################################################
         self.logo7 = tk.PhotoImage(file='clock')
-        self.timetraverserbutton = tk.Button(self, text='time traverser', command=self.open_file, compound=tk.TOP,
+        self.timetraverserbutton = tk.Button(self, text='time traverser', command=self.time_traverse, compound=tk.TOP,
                                              relief=tk.FLAT,
                                              image=self.logo7, font=("garamond", "10", "bold"))
         self.timetraverserbutton.place(x=400, y=30)
@@ -95,11 +105,30 @@ class Main(tk.Tk):
         scrollbar.config(command=self.lstbox.yview)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
+    def time_traverse(self):
+
+        hj = self.txtbox.get(1.0, tk.INSERT)
+        print(hj)
+        path1 = os.getcwd()
+        path = path1 + '/include/resources/_usr/logs/traverse'
+        filename = tk.filedialog.askopenfilename(initialdir=path, title="Select file",
+                                                 filetypes=(("txt files", "*.txt"), ("all files", "*.*")))
+        try:
+            self.txtbox.delete(1.0, tk.END)
+            self.filename_pointer = filename
+            f = open(filename, "r")
+            for i in f.read():
+                self.txtbox.insert(tk.END, i)
+            self.file_address_label.config(text=filename)
+
+        except:
+            pass
+
     def word_suggestion_method(self):
         while 1 == 1:
             if self.aicounter % 2 != 0:
 
-                a = self.txtbox.get(1.0, tk.END)
+                a = self.txtbox.get(1.0, tk.INSERT)
 
                 lis = a.split(" ")
                 removablewords = ['\n', '\t']
@@ -118,7 +147,7 @@ class Main(tk.Tk):
                             str5 = str5.replace(word, "", 1)
                             try:
                                 for m in str5:
-                                    self.txtbox.insert(tk.END, m)
+                                    self.txtbox.insert(tk.INSERT, m)
                             except:
                                 pass
                             ####################
@@ -165,16 +194,35 @@ class Main(tk.Tk):
             self.update()
         return 0
 
+    def anoynymous_save(self, namecopy):
+        currdate = date.today()
+        currtime = time.strftime("%H:%M:%S")
+        if 1 == 1:
+            path1 = os.getcwd()
+            filename = path1 + '/include/resources/_usr/logs/traverse/'
+            filename = filename + namecopy + str(currdate) + str(currtime)
+            f = open(filename, "w")
+            a = self.txtbox.get(1.0, tk.END)
+
+            f.write(a)
+            f.close()
+            return 0
+
     def save_file(self):
         self.status.config(image=self.logo4)
         self.update()
-        try:
+        # try:
+        if 1 == 1:
             if self.file_address_label.cget("text") != 'untitled':
                 f = open(self.filename_pointer, "w")
                 a = self.txtbox.get(1.0, tk.END)
 
                 f.write(a)
                 f.close()
+                obj2 = filename_provider(self.filename_pointer)
+                namecopy = obj2.get()
+                self.anoynymous_save(namecopy)
+
                 ################# adding the files word to words library file ###################
                 lis = words_filter(a)
                 listofwords = lis.output()
@@ -182,21 +230,25 @@ class Main(tk.Tk):
 
             else:
                 filename = tk.filedialog.asksaveasfilename(initialdir="/", title="Select file",
-                                                           filetypes=(("jpeg files", "*.jpg"), ("all files", "*.*")))
+                                                           filetypes=(("txt files", "*.txt"), ("all files", "*.*")))
                 self.filename_pointer = filename
                 f = open(filename, "w")
                 a = self.txtbox.get(1.0, tk.END)
 
                 f.write(a)
                 f.close()
+                self.file_address_label.config(text=filename)
+                self.update()
+                obj2 = filename_provider(filename)
+                namecopy = obj2.get()
+                self.anoynymous_save(namecopy)
                 ################# adding the files word to words library file ###################
                 lis = words_filter(a)
                 listofwords = lis.output()
                 obj = Words_adder(listofwords)
 
-                self.file_address_label.config(text=filename)
-        except:
-            pass
+        # except:
+        #   print('exception!!')
         self.status.config(image=self.logo3)
         self.update()
 
@@ -205,13 +257,16 @@ class Main(tk.Tk):
         self.update()
         try:
             filename = tk.filedialog.asksaveasfilename(initialdir="/", title="Select file",
-                                                       filetypes=(("jpeg files", "*.jpg"), ("all files", "*.*")))
+                                                       filetypes=(("txt files", "*.txt"), ("all files", "*.*")))
             f = open(filename, "w")
             a = self.txtbox.get(1.0, tk.END)
 
             f.write(a)
             f.close()
-            ################# adding the files word to words library file ###################
+            obj2 = filename_provider(self.filename)
+            namecopy = obj2.get()
+            self.anoynymous_save(namecopy)
+            ################# adding the files word to words library file ################self.anoynymous_save()###
             lis = words_filter(a)
             listofwords = lis.output()
             obj = Words_adder(listofwords)
@@ -236,7 +291,7 @@ class Main(tk.Tk):
         self.update()
 
         filename = tk.filedialog.askopenfilename(initialdir="/", title="Select file",
-                                                 filetypes=(("jpeg files", "*.jpg"), ("all files", "*.*")))
+                                                 filetypes=(("txt files", "*.txt"), ("all files", "*.*")))
         try:
             self.txtbox.delete(1.0, tk.END)
             self.filename_pointer = filename
