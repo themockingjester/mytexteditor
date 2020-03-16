@@ -5,12 +5,15 @@ class Words_Suggestor():
         self.str1=str(str2)
         self.Words_Suggestor_working()
     def list_return(self):
+
         return self.newlis
+
     def Words_Suggestor_working(self):
         self.newlis = []
         wb = openpyxl.load_workbook("words_library.xlsx")
         sheet = wb['Sheet1']  # wb.get_sheet_names())
-        self.newlis2=[]
+        self.newlis2 = []
+        ctr = 0
         try:
 
             if ord(self.str1[0]) >= 65 and ord(self.str1[0]) <= 90:
@@ -26,9 +29,14 @@ class Words_Suggestor():
 
                 for i in range(1, sheet.max_row + 1):
                     value = str(sheet.cell(row=i, column=columnvalue).value)
-                    sd=self.str1
+                    sd = self.str1
                     if sd in value:
-                        self.newlis.append(value)
+                        if value == 'None' and ctr == 0:
+                            ctr += 1
+                            self.newlis.append(value)
+                        else:
+                            if value != 'None':
+                                self.newlis.append(value)
 
 
         except:

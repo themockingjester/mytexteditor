@@ -1,4 +1,6 @@
 import openpyxl
+
+
 class Words_adder():
     def __init__(self,list):
 
@@ -32,12 +34,19 @@ class Words_adder():
 
                     if (ctr == 0):
                         s = "cant find that in our data"
-                        cell=sheet.cell(row=sheet.max_row + 1, column=columnvalue)
-                        cell.value=k
+                        for i in range(1, sheet.max_row + 2):
+                            # print('maxrow',sheet.max_row)
 
-                        print(('but added'))
+                            if str(sheet.cell(row=i, column=columnvalue).value) == 'None':
+                                cell = sheet.cell(row=i, column=columnvalue)
+                                cell.value = k
+
+                                print(('but added'))
+                                break
+
                     else:
                         pass
             except:
                 pass
+        print('khatam')
         wb.save("words_library.xlsx")

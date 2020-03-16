@@ -1,9 +1,11 @@
+import tkinter
 import tkinter as tk
 from Words_Suggestor import Words_Suggestor
 from Words_adder import Words_adder
 import time, threading, keyboard
 from tkinter import filedialog
 from tkinter import scrolledtext
+
 from words_filter import words_filter
 
 
@@ -77,28 +79,74 @@ class Main(tk.Tk):
         self.file_address_label.place(x=800, y=822)
 
         ######################################################################################################################
+
+        ###########################################setting listbox ###########################################################
+
+        root = tk.Frame(self)
+        root.place(x=1200, y=35)
+        scrollbar = tk.Scrollbar(root)
+        # scrollbar.pack(side=RIGHT, fill=Y) # Now it's active, but not visible
+        self.lstbox = tk.Listbox(root, height=6)
+        self.lstbox.pack(side=tk.LEFT)
+
+        # attach listbox to scrollbar
+        self.lstbox.config(yscrollcommand=scrollbar.set)
+
+        scrollbar.config(command=self.lstbox.yview)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
     def word_suggestion_method(self):
         while 1 == 1:
             if self.aicounter % 2 != 0:
+
                 a = self.txtbox.get(1.0, tk.END)
-                #lis=words_filter(a)
-                #listofwords=lis.output()
-                #listofwords=list(listofwords)
-                lis=a.split(" ")
-                removablewords=['\n','\t']
-                word=' '.join([i for i in lis if i not in removablewords]) #removining tabs and new line character
-                word=word.split(" ")        #againg breaking the filtewred string to get the last word
-                word=str(word[-1])
-                word=word.split('\n')
+
+                lis = a.split(" ")
+                removablewords = ['\n', '\t']
+                word = ' '.join([i for i in lis if i not in removablewords])  # removining tabs and new line character
+                word = word.split(" ")  # againg breaking the filtewred string to get the last word
+                word = str(word[-1])
+                word = word.split('\n')
                 word = str(word[0])
+
+                try:
+                    if old == word:
+                        if len(self.lstbox.curselection()) != 0 and lstboxcurrcounter == 0:
+                            print(self.lstbox.get(self.lstbox.curselection()))
+                            #########################
+                            str5 = str(self.lstbox.get(self.lstbox.curselection()))
+                            str5 = str5.replace(word, "", 1)
+                            try:
+                                for m in str5:
+                                    self.txtbox.insert(tk.END, m)
+                            except:
+                                pass
+                            ####################
+                            lstboxcurrcounter += 1
+                        continue
+                    else:
+                        pass
+                except:
+                    pass
+                lstboxcurrcounter = 0
                 obj = Words_Suggestor(word)
-                print(obj.list_return())
+
+                try:
+                    self.lstbox.delete(0, tk.END)
+                except:
+                    pass
+                for i in obj.list_return():
+                    self.lstbox.insert(0, i)
+
+                old = word
+
             else:
-                pass
+                return 0
+
     def ai_mode(self):
         self.aicounter += 1
 
-
+        print(self.txtbox.index(tk.INSERT))
         thread1 = threading.Thread(target=self.ai_working)
         thread1.start()
 
@@ -112,9 +160,9 @@ class Main(tk.Tk):
 
 
         else:
-                    print('stopped!!!!')
-                    self.aibutton.config(image=self.logo9)
-                    self.update()
+            print('stopped!!!!')
+            self.aibutton.config(image=self.logo9)
+            self.update()
         return 0
 
     def save_file(self):
