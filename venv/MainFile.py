@@ -365,6 +365,21 @@ class Main(tk.Tk):
     def create_file(self):
         self.status.config(image=self.logo4)
         self.update()
+        self.win1 = tk.Toplevel(self)
+        message = tk.Label(self.win1, text='Are you sure you want to delete the content and want new file?')
+        message.pack()
+        button1 = tk.Button(self.win1, text='Yes', command=self.confirm_new_file)
+        button1.pack()
+        button2 = tk.Button(self.win1, text='No', command=self.cancel_new_file)
+        button2.pack()
+
+    def cancel_new_file(self):
+        self.win1.destroy()
+        self.status.config(image=self.logo3)
+        self.update()
+
+    def confirm_new_file(self):
+        self.win1.destroy()
         self.filename_pointer = ""
         self.file_address_label.config(text='untitled')
         self.txtbox.delete(1.0, tk.END)
