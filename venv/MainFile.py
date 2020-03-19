@@ -131,8 +131,8 @@ class Main(tk.Tk):
 
         ############################################ setting microphone icon ##################################################
         self.botcounter = 0
-        self.logo11 = tk.PhotoImage(file='mic')
-
+        self.logo11 = tk.PhotoImage(file='offmic')
+        self.logo12 = tk.PhotoImage(file='onmic')
         self.micbutton = tk.Button(self, text='mic', command=self.auto_type, compound=tk.TOP,
                                    relief=tk.FLAT,
                                    image=self.logo11, font=("garamond", "10", "bold"))
@@ -146,9 +146,12 @@ class Main(tk.Tk):
         self.botcounter += 1
 
         while self.botcounter % 2 != 0:
+            self.micbutton.config(image=self.logo12)
             obj = mic_feature()
-            self.txtbox.insert(tk.INSERT, obj.get())
 
+            self.txtbox.insert(tk.INSERT, obj.get())
+        self.micbutton.config(image=self.logo11)
+        print("bot stopped")
     def copy_file(self):
         self.clipboard_clear()
         text = self.txtbox.get(1.0, tk.END)

@@ -1,37 +1,45 @@
+import threading
+import openpyxl, time
+import speech_recognition as sr
+import json  # used for catching the exception thrown by google audio
+
+r = sr.Recognizer()
+
+
 class mic_feature:
     def __init__(self):
-        try:
-            import speech_recognition as sr
-            import json  # used for catching the exception thrown by google audio
-            r = sr.Recognizer()
 
+        thread5 = threading.Thread(target=self.working())
+        thread5.start()
+
+    def working(self):
+        if 1 == 1:
+
+            self.st = ""
             ctr = 0
 
-            import openpyxl, time
-
-            u = 1
             with sr.Microphone() as source:
-                r.adjust_for_ambient_noise(source)
-                while 1:
+                r.adjust_for_ambient_noise(source, duration=0.3)
+                if 1 == 1:
 
                     print("Speak Anything :")
                     # time.sleep(4)
                     try:
-                        audio = r.listen(source)
+                        audio = r.listen(source, phrase_time_limit=4)
 
                     except:
 
                         print("internal problem occured in listening")
-                        continue
+
                     try:
 
-                        text = r.recognize_google(audio, language='en-IN')
+                        text = r.recognize_google(audio, language='en-US')
                         response = json.dumps(text, ensure_ascii=False).encode(
                             'utf8')  # this is must otherwise above line will throw exception
 
                         text = text.lower()
-                        print(text)
-                        wb = openpyxl.load_workbook("training.xlsx")
+
+                        '''wb = openpyxl.load_workbook("training.xlsx")
                         time.sleep(1)
                         sheet = wb['Sheet1']  # wb.get_sheet_names())
 
@@ -52,12 +60,15 @@ class mic_feature:
 
                         else:
                             pass
+                        '''
+                        text = text + " "
+                        self.st = text
 
                     except:
                         s = "can't recognize"
-
-        except:
-            print('sry this feature is not supportable in your pc')
+            return 0
+        else:
+            print('couldn\'t understand')
 
     def get(self):
-        return self.s
+        return self.st
