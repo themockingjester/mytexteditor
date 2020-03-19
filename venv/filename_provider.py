@@ -10,10 +10,10 @@ class filename_provider():
             else:
                 break
         str1 = str1[::-1]
-        print(str1)
+
         self.output = str1
         self.get
 
     def get(self):
-        print(self.output)
+
         return self.output

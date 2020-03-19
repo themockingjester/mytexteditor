@@ -26,14 +26,14 @@ class Words_adder():
                             ctr = 1
                             s = sheet.cell(row=i, column=columnvalue).value
                             # time.sleep(2.5)
-                            print('found')
+
                             break
                         else:
                             pass
                     # print("ctr="+ str(ctr))
 
                     if (ctr == 0):
-                        s = "cant find that in our data"
+
                         for i in range(1, sheet.max_row + 2):
                             # print('maxrow',sheet.max_row)
 
@@ -41,12 +41,11 @@ class Words_adder():
                                 cell = sheet.cell(row=i, column=columnvalue)
                                 cell.value = k
 
-                                print(('but added'))
                                 break
 
                     else:
                         pass
             except:
                 pass
-        print('khatam')
+
         wb.save("words_library.xlsx")

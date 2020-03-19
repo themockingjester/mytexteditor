@@ -1,11 +1,17 @@
 import os
-import tkinter
+from mic_feature import mic_feature
+import speech_recognition as sr
+import json  # used for catching the exception thrown by google audio
+
+import openpyxl
+
 import tkinter as tk
 from datetime import date
 from filename_provider import filename_provider
 from Words_Suggestor import Words_Suggestor
 from Words_adder import Words_adder
-import time, threading, keyboard
+import time, threading
+import keyboard
 from tkinter import filedialog
 from tkinter import scrolledtext
 
@@ -22,6 +28,13 @@ class Main(tk.Tk):
             os.chdir(path1)
         except:
             pass
+
+        self.title('Volcan Text Editor')
+        ################################# thread which what to do when pair of keys pressed ################################
+        # thread3 = threading.Thread(target=self.keysresponser)
+        # thread3.start()
+        ######################################### #########################################################################
+
         ################################################create file panel#####################################################
         self.logo = tk.PhotoImage(file='createfile1.png')
         self.newbutton = tk.Button(self, text='new file', command=self.create_file, compound=tk.TOP, relief=tk.FLAT,
@@ -86,7 +99,7 @@ class Main(tk.Tk):
 
         self.file_address_label = tk.Label(self, relief=tk.FLAT, text='untitled',
                                            font=("garamond", "15", "bold", "italic"))  # score teller
-        self.file_address_label.place(x=800, y=822)
+        self.file_address_label.place(x=40, y=822)
 
         ######################################################################################################################
 
@@ -105,10 +118,73 @@ class Main(tk.Tk):
         scrollbar.config(command=self.lstbox.yview)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
+        #######################################################################################################################
+
+        ##################################################### settinng copy button ##############################################
+        self.logo10 = tk.PhotoImage(file='copy')
+
+        self.copybutton = tk.Button(self, text='copy', command=self.copy_file, compound=tk.TOP,
+                                    relief=tk.FLAT,
+                                    image=self.logo10, font=("garamond", "10", "bold"))
+        self.copybutton.place(x=530, y=30)
+        ######################################################################################################################
+
+        ############################################ setting microphone icon ##################################################
+        self.botcounter = 0
+        self.logo11 = tk.PhotoImage(file='mic')
+
+        self.micbutton = tk.Button(self, text='mic', command=self.auto_type, compound=tk.TOP,
+                                   relief=tk.FLAT,
+                                   image=self.logo11, font=("garamond", "10", "bold"))
+        self.micbutton.place(x=630, y=30)
+
+    def auto_type(self):
+        thread4 = threading.Thread(target=self.bot)
+        thread4.start()
+
+    def bot(self):
+        self.botcounter += 1
+
+        while self.botcounter % 2 != 0:
+            obj = mic_feature()
+            self.txtbox.insert(tk.INSERT, obj.get())
+
+    def copy_file(self):
+        self.clipboard_clear()
+        text = self.txtbox.get(1.0, tk.END)
+        self.clipboard_append(text)
+        return 0
+
+    def keysresponser(self):
+        if 1 == 1:
+            try:  # used try so that if user pressed other than the given key error will not be shown
+
+                if keyboard.is_pressed('ctrl + s'):  # save file
+                    print('saving the file!')
+                    self.save_file()
+                if keyboard.is_pressed('ctrl + shift + c'):  # COPY file
+                    print('coping the file!')
+                    self.copy_file()
+                if keyboard.is_pressed('ctrl + o'):  # open file
+                    print('opening the file!')
+                    self.open_file()
+                if keyboard.is_pressed('esc'):  # ai button
+                    print('ai !')
+                    self.ai_mode()
+                if keyboard.is_pressed('ctrl + shift + r'):  # time traverser button
+                    print('time traverser mode !')
+                    self.time_traverse()
+                if keyboard.is_pressed('ctrl + shift + n'):  # new file  button
+                    print('new file!')
+                    self.create_file()
+
+                return 0
+
+            except:
+                pass
+
     def time_traverse(self):
 
-        hj = self.txtbox.get(1.0, tk.INSERT)
-        print(hj)
         path1 = os.getcwd()
         path = path1 + '/include/resources/_usr/logs/traverse'
         filename = tk.filedialog.askopenfilename(initialdir=path, title="Select file",
@@ -124,8 +200,10 @@ class Main(tk.Tk):
         except:
             pass
 
+    @property
     def word_suggestion_method(self):
         while 1 == 1:
+            self.keysresponser()
             if self.aicounter % 2 != 0:
 
                 a = self.txtbox.get(1.0, tk.INSERT)
@@ -136,18 +214,23 @@ class Main(tk.Tk):
                 word = word.split(" ")  # againg breaking the filtewred string to get the last word
                 word = str(word[-1])
                 word = word.split('\n')
-                word = str(word[0])
+
+                if (len(word) <= 1):
+                    word = str(word[0])
+                else:
+                    word = str(word[-1])
 
                 try:
                     if old == word:
                         if len(self.lstbox.curselection()) != 0 and lstboxcurrcounter == 0:
-                            print(self.lstbox.get(self.lstbox.curselection()))
+
                             #########################
                             str5 = str(self.lstbox.get(self.lstbox.curselection()))
                             str5 = str5.replace(word, "", 1)
                             try:
                                 for m in str5:
                                     self.txtbox.insert(tk.INSERT, m)
+                                self.txtbox.focus_set()
                             except:
                                 pass
                             ####################
@@ -175,7 +258,7 @@ class Main(tk.Tk):
     def ai_mode(self):
         self.aicounter += 1
 
-        print(self.txtbox.index(tk.INSERT))
+
         thread1 = threading.Thread(target=self.ai_working)
         thread1.start()
 
@@ -184,7 +267,7 @@ class Main(tk.Tk):
         if self.aicounter % 2 != 0:
             self.aibutton.config(image=self.logo8)
             self.update()
-            thread2 = threading.Thread(target=self.word_suggestion_method())
+            thread2 = threading.Thread(target=self.word_suggestion_method)
             thread2.start()
 
 
